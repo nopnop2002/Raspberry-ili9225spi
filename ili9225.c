@@ -50,9 +50,6 @@ void lcdWriteCommandByte(uint8_t c){
   int data;
   bcm2835_gpio_write(D_C,LOW);
   data = bcm2835_spi_transfer(c);
-  bcm2835_gpio_write(D_C,HIGH);
-// printf("COMMAND: %02X\n", c);
-// printf("DATA: %02X\n", data);
 }
 
 // SPI Write Data 8Bit
@@ -118,7 +115,7 @@ void lcdInit(void){
 void lcdReset(void){
   bcm2835_gpio_fsel(D_C,BCM2835_GPIO_FSEL_OUTP); // D/C
   bcm2835_gpio_fsel(RES_,BCM2835_GPIO_FSEL_OUTP); // Reset
-  bcm2835_gpio_write(D_C, HIGH);   // D/C = H
+//  bcm2835_gpio_write(D_C, HIGH);   // D/C = H
 
   bcm2835_gpio_write(RES_, LOW);   // Reset
   bcm2835_delay(100);
