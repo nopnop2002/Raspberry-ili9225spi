@@ -26,7 +26,7 @@ build with bcm2835 library
 
 git clone https://github.com/nopnop2002/ili9225spi_rpi   
 cd ili9225spi_rpi   
-cc -o demo demo.c fontx.c ili9225.c -lbcm2835 -lm -DBCM   
+cc -o demo demo.c fontx.c ili9225.c -lbcm2835 -lm   
 
 ----
 

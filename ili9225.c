@@ -32,7 +32,7 @@
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
 #endif
-#ifdef BCM
+#ifndef WPI
 #include <bcm2835.h>
 #endif
 #include "ili9225.h"
@@ -71,7 +71,7 @@ void lcdWriteDataByte(uint8_t c){
 }
 #endif
 
-#ifdef BCM
+#ifndef WPI
 // SPI Write Command 8Bit
 // D/C=LOW then,write command(8bit)
 void lcdWriteCommandByte(uint8_t c){
@@ -151,7 +151,7 @@ void lcdReset(void){
 }
 #endif
 
-#ifdef BCM
+#ifndef WPI
 // SPI interfase initialize
 // MSB,mode0,clock=8,cs0=low
 void lcdInit(void){
