@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
-#include <bcm2835.h>
+//#include <bcm2835.h>
 #include "ili9225.h"
 
 #define XMAX    174
@@ -36,10 +36,12 @@ int main()
   uint16_t size;
   uint8_t utf[64];
 
+#if 0
   if (bcm2835_init() == -1) {
     printf("bmc2835_init Error\n");
     return 1;
   }
+#endif
 
   // You can change font file
   // 32Dot Gothic

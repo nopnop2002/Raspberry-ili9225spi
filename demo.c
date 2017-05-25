@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
-#include <bcm2835.h>
+//#include <bcm2835.h>
 #include "ili9225.h"
 
 #define XMAX    174
@@ -34,11 +34,6 @@ int main()
   uint16_t size;
   uint8_t utf[10];
 
-  if (bcm2835_init() == -1) {
-    printf("bmc2835_init Error\n");
-    return 1;
-  }
-
   // You can change font file
   // 16Dot Gothic
   Fontx_init(fxG16,"./fontx/ILGH16XB.FNT","./fontx/ILGZ16XB.FNT");
@@ -69,7 +64,6 @@ int main()
     }
    }
   }
-  sleep(1);
 if(_DEBUG_)inputKey();
 
   //coner angle
@@ -105,8 +99,6 @@ if(_DEBUG_)inputKey();
   ypos = 170;
   strcpy(utf,"173,219");
   lcdDrawUTF8String(fxG16, xpos, ypos, utf, color);
-
-  sleep(1);
 if(_DEBUG_)inputKey();
 
   //drawLine
@@ -119,7 +111,6 @@ if(_DEBUG_)inputKey();
   for(xpos=0;xpos<XMAX;xpos=xpos+10) {
     lcdDrawLine(xpos,0,xpos,YMAX,color);
   }
-  sleep(1);
 if(_DEBUG_)inputKey();
 
   //drawRect
@@ -128,7 +119,6 @@ if(_DEBUG_)inputKey();
   for(i=10;i<90;i=i+10) {
     lcdDrawRect(i,i,XMAX-i,YMAX-i,color);
   }
-  sleep(1);
 if(_DEBUG_)inputKey();
 
   //drawCircle
@@ -139,7 +129,6 @@ if(_DEBUG_)inputKey();
   for(i=10;i<220;i=i+10) {
     lcdDrawCircle(xpos,ypos,i,color);
   }
-  sleep(1);
 if(_DEBUG_)inputKey();
 
   //drawRoundRect
@@ -148,7 +137,6 @@ if(_DEBUG_)inputKey();
   for(i=10;i<90;i=i+10) {
     lcdDrawRoundRect(i,i,XMAX-i,YMAX-i,10,color);
   }
-  sleep(1);
 if(_DEBUG_)inputKey();
 
   //drawString
@@ -224,7 +212,6 @@ if(_DEBUG_)inputKey();
   lcdSetFontUnderLine(GRAY);
   ypos = lcdDrawUTF8String(fxG16, xpos, ypos, utf, color);
   lcdUnsetFontUnderLine();
-  sleep(1);
 if(_DEBUG_)inputKey();
 
   //draw malti font
@@ -267,8 +254,6 @@ if(_DEBUG_)inputKey();
   xpos = XMAX2-(16*6)-(24*3);
   strcpy(utf,"ABCDEFGabcdefg");
   xpos = lcdDrawUTF8String(fxM24, xpos, ypos, utf, color);
-
-  sleep(1);
 if(_DEBUG_)inputKey();
 
   //drawFillRect
