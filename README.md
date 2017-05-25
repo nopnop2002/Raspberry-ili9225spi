@@ -22,7 +22,7 @@ Wirering
 
 ----
 
-build with bcm2835 library   
+build with bcm2835 library (very fast)   
 
 git clone https://github.com/nopnop2002/ili9225spi_rpi   
 cd ili9225spi_rpi   
