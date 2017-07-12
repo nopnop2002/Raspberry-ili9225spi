@@ -2,7 +2,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
-//#include <bcm2835.h>
 #include "ili9225.h"
 
 #define XMAX    174
@@ -44,7 +43,7 @@ int main()
   // 24Dot Mincho
   Fontx_init(fxM24,"./fontx/ILMH24XF.FNT","./fontx/ILMZ24XF.FNT");
 
-  lcdInit();
+  lcdInit(0x9225,XMAX,YMAX);
   lcdReset();
   lcdSetup();
 

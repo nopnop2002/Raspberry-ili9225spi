@@ -41,8 +41,6 @@
 #define RES  3  // GPIO3=RESET
 #define C_S  8  // GPIO8
 
-#define XMAX    174
-#define YMAX    220
 #define _DEBUG_ 0
 
 uint16_t _FONT_DIRECTION_;
@@ -50,6 +48,10 @@ uint16_t _FONT_FILL_;
 uint16_t _FONT_FILL_COLOR_;
 uint16_t _FONT_UNDER_LINE_;
 uint16_t _FONT_UNDER_LINE_COLOR_;
+
+uint16_t _model;
+uint16_t _width;
+uint16_t _height;
 
 #ifdef WPI
 // SPI Write Command 8Bit
@@ -89,17 +91,6 @@ void lcdWriteDataByte(uint8_t c){
 }
 #endif
 
-#if 0
-// SPI Write Command 16Bit
-void lcdWriteCommandWord(uint16_t w){
-  uint8_t hi,lo;
-  hi = (char) (w >> 8);
-  lo = (char) (w & 0x00FF);
-//  lcdWriteCommandByte(hi);
-  lcdWriteCommandByte(lo);
-}
-#endif
-
 // SPI Write Data 16Bit
 void lcdWriteDataWord(uint16_t w){
   uint8_t hi,lo;
@@ -124,7 +115,10 @@ void lcdWrite9225(uint8_t c, uint16_t d){
 #ifdef WPI
 // SPI interfase initialize
 // MSB,mode0,clock=8,cs0=low
-void lcdInit(void){
+void lcdInit(uint16_t model, uint16_t width, uint16_t height){
+  _model = model;
+  _width = width;
+  _height = height;
 
   if (wiringPiSetupGpio() == -1) {
     printf("wiringPiSetup Error\n");
@@ -143,6 +137,7 @@ void lcdReset(void){
   pinMode(RES,OUTPUT);
   pinMode(C_S,OUTPUT);
   digitalWrite(D_C,HIGH);   // D/C = H
+  digitalWrite(C_S,LOW);
 
   digitalWrite(RES, LOW);    // Reset low
   delay(100);
@@ -154,7 +149,11 @@ void lcdReset(void){
 #ifndef WPI
 // SPI interfase initialize
 // MSB,mode0,clock=8,cs0=low
-void lcdInit(void){
+void lcdInit(uint16_t model, uint16_t width, uint16_t height){
+  _model = model;
+  _width = width;
+  _height = height;
+
   if (bcm2835_init() == -1) {
     printf("bmc2835_init Error\n");
     return;
@@ -239,8 +238,8 @@ void lcdSetup(void){
 // y:Y coordinate
 // color:color
 void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color){
-  if (x < 0 || x >= XMAX) return;
-  if (y < 0 || y >= YMAX) return;
+  if (x < 0 || x >= _width) return;
+  if (y < 0 || y >= _height) return;
   lcdWrite9225(0x20,x); // set column(x) address
   lcdWrite9225(0x21,y); // set column(y) address
   lcdWrite9225(0x22,color); // Memory Write
@@ -254,14 +253,14 @@ void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color){
 // color:color
 void lcdDrawFillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color){
   int i,j;
-  if (x1 >= XMAX) return;
+  if (x1 >= _width) return;
   if (x1 < 0) x1=0;
   if (x2 < 0) return;
-  if (x2 >= XMAX) x2=XMAX-1;
-  if (y1 >= YMAX) return;
+  if (x2 >= _width) x2=_width-1;
+  if (y1 >= _height) return;
   if (y1 < 0) y1=0;
   if (y2 < 0) return;
-  if (y2 >= YMAX) y2=YMAX-1;
+  if (y2 >= _height) y2=_height-1;
 
   for(j=y1;j<=y2;j++){
     lcdWrite9225(0x20,x1); // set column(x) address
@@ -286,7 +285,7 @@ void lcdDisplayOn(void){
 // Fill screen
 // color:color
 void lcdFillScreen(uint16_t color) {
-  lcdDrawFillRect(0, 0, XMAX-1, YMAX-1, color);
+  lcdDrawFillRect(0, 0, _width-1, _height-1, color);
 }
 
 // Draw line
