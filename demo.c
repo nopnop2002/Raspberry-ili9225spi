@@ -2,6 +2,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdlib.h>
+#include <time.h>
 #include "ili9225.h"
 
 #define XMAX    174
