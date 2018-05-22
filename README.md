@@ -1,7 +1,6 @@
 # ili9225spi_rpi
-ILI9225 SPI TFT Library for Raspberry
+ILI9225 SPI TFT Library for RaspberryPi/OrangePi.  
 
-This is library for RaspberryPi.   
 This library can show a chart to ILI9225 SPI TFT.   
 
 ----
