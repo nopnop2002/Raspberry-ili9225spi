@@ -23,6 +23,15 @@ Wirering
 
 build with bcm2835 library (very fast)   
 
+wget http://www.airspayce.com/mikem/bcm2835/bcm2835-1.42.tar.gz   
+tar zxvf bcm2835-1.42.tar.gz   
+cd bcm2835-1.42   
+./configure   
+make   
+sudo make check   
+sudo make install   
+cd $HOME   
+
 git clone https://github.com/nopnop2002/ili9225spi_rpi   
 cd ili9225spi_rpi   
 cc -o demo demo.c fontx.c ili9225.c -lbcm2835 -lm -lpthread   
