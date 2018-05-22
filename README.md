@@ -11,11 +11,11 @@ Wirering
 |:-:|:-:|:-:|
 |MISO|--|N/C|
 |LED|--|3.3V|
-|SCK|--|Pin#23|
-|MOSI|--|Pin#19|
+|SCK|--|Pin#23(SPI SCLK)|
+|MOSI|--|Pin#19(SPI MOSI)|
 |D/C|--|Pin#3(*)|
 |RES|--|Pin#5(*)|
-|CS|--|Pin#24|
+|CS|--|Pin#24(SPI CE0)|
 |GND|--|GND|
 |5V|--|5V|
 
