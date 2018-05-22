@@ -13,11 +13,15 @@ Wirering
 |LED|--|3.3V|
 |SCK|--|Pin#23|
 |MOSI|--|Pin#19|
-|D/C|--|Pin#3|
-|RES|--|Pin#5|
+|D/C|--|Pin#3(*)|
+|RES|--|Pin#5(*)|
 |CS|--|Pin#24|
 |GND|--|GND|
 |5V|--|5V|
+
+(*) You can change any pin.   
+#define D_C  2  // GPIO2=D/C   
+#define RES  3  // GPIO3=RESET   
 
 ----
 
