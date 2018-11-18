@@ -19,7 +19,9 @@ Wirering
 |GND|--|GND|
 |5V|--|5V|
 
-(*) You can change any pin.   
+(*) 
+This is default.
+If you want to use other pin, You have to change this.
 #define D_C  2  // GPIO2=D/C   
 #define RES  3  // GPIO3=RESET   
 
