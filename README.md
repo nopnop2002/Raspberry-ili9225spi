@@ -39,7 +39,6 @@ cd $HOME
 git clone https://github.com/nopnop2002/ili9225spi_rpi   
 cd ili9225spi_rpi   
 cc -o demo demo.c fontx.c ili9225.c -lbcm2835 -lm -lpthread   
-cc -o ascii ascii.c fontx.c ili9225.c -lbcm2835 -lm -lpthread   
 
 ----
 
@@ -48,7 +47,6 @@ build with wiringPi library (very slow)
 git clone https://github.com/nopnop2002/ili9225spi_rpi   
 cd ili9225spi_rpi   
 cc -o demo demo.c fontx.c ili9225.c -lwiringPi -lm -lpthread -DWPI   
-cc -o ascii ascii.c fontx.c ili9225.c -lwiringPi -lm -lpthread -DWPI   
 
 ---
 
