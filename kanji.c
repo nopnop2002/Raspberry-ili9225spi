@@ -27,12 +27,8 @@ void inputKey() {
 
 int main()
 {
-  int i,j;
-  uint16_t Y1,Y2;
-  uint16_t X1,X2;
   uint16_t xpos,ypos;
   uint16_t color;
-  uint16_t size;
   uint8_t utf[64];
 
   // You can change font file
@@ -58,7 +54,7 @@ int main()
   xpos = 0;
   ypos = YMAX2-(16*1);
   color = BLACK;
-  strcpy(utf,"漢字TEST");
+  strcpy((char *)utf,"漢字TEST");
   xpos = lcdDrawUTF8String(fxG16, xpos, ypos, utf, color);
 
   xpos = 0;
@@ -126,7 +122,6 @@ int main()
   lcdSetFontUnderLine(GRAY);
   ypos = lcdDrawUTF8String(fxG16, xpos, ypos, utf, color);
   lcdUnsetFontUnderLine();
-  sleep(1);
 if(_DEBUG_)inputKey();
 
   //draw multiple font
@@ -136,38 +131,39 @@ if(_DEBUG_)inputKey();
   xpos = XMAX2-(24*1);
   ypos = YMAX2;
   color = BLACK;
-  strcpy(utf,"24ドットゴシック");
+  strcpy((char *)utf,"24ドットゴシック");
   xpos = lcdDrawUTF8String(fxG24, xpos, ypos, utf, color);
 
   xpos = XMAX2-(24*2);
-  strcpy(utf,"ABCDEFGabcdefg");
+  strcpy((char *)utf,"ABCDEFGabcdefg");
   xpos = lcdDrawUTF8String(fxG24, xpos, ypos, utf, color);
 
   xpos = XMAX2-(24*3);
   ypos = YMAX2;
-  strcpy(utf,"24ドット明朝");
+  strcpy((char *)utf,"24ドット明朝");
   xpos = lcdDrawUTF8String(fxM24, xpos, ypos, utf, color);
 
   xpos = XMAX2-(24*4);
-  strcpy(utf,"ABCDEFGabcdefg");
+  strcpy((char *)utf,"ABCDEFGabcdefg");
   xpos = lcdDrawUTF8String(fxM24, xpos, ypos, utf, color);
 
   xpos = XMAX2-(24*5)-(16*0);
   ypos = YMAX2;
-  strcpy(utf,"16ドットゴシック");
+  strcpy((char *)utf,"16ドットゴシック");
   xpos = lcdDrawUTF8String(fxG16, xpos, ypos, utf, color);
 
   xpos = XMAX2-(24*5)-(16*1);
-  strcpy(utf,"ABCDEFGabcdefg");
+  strcpy((char *)utf,"ABCDEFGabcdefg");
   xpos = lcdDrawUTF8String(fxG16, xpos, ypos, utf, color);
 
   xpos = XMAX2-(24*5)-(16*2);
   ypos = YMAX2;
-  strcpy(utf,"16ドット明朝");
+  strcpy((char *)utf,"16ドット明朝");
   xpos = lcdDrawUTF8String(fxM16, xpos, ypos, utf, color);
 
   xpos = XMAX2-(24*5)-(16*3);
-  strcpy(utf,"ABCDEFGabcdefg");
+  strcpy((char *)utf,"ABCDEFGabcdefg");
   xpos = lcdDrawUTF8String(fxM16, xpos, ypos, utf, color);
 
+  return 0;
 }
