@@ -36,6 +36,10 @@ sudo make check
 sudo make install   
 cd $HOME   
 
+_\* This tool require 1.56 or later._   
+_\* Because this tool uses bcm2835_spi_write._   
+
+
 git clone https://github.com/nopnop2002/ili9225spi_rpi   
 cd ili9225spi_rpi   
 cc -o demo demo.c fontx.c ili9225.c -lbcm2835 -lm -lpthread   

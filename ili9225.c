@@ -91,11 +91,17 @@ void lcdWriteDataByte(uint8_t c){
 
 // SPI Write Data 16Bit
 void lcdWriteDataWord(uint16_t w){
+#if 0
+//bcm2835-1.42
   uint8_t hi,lo;
   hi = (char) (w >> 8);
   lo = (char) (w & 0x00FF);
   lcdWriteDataByte(hi);
   lcdWriteDataByte(lo);
+#endif
+//bcm2835-1.56
+  bcm2835_gpio_write(D_C,HIGH);
+  bcm2835_spi_write(w);
 }
 
 // SPI Write Command & Data
