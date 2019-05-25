@@ -66,4 +66,5 @@ sudo ./demo
 ![ili9225-18](https://user-images.githubusercontent.com/6020549/58362419-c0d59c00-7ed1-11e9-8fec-2d5b673a877a.JPG)
 ![ili9225-19](https://user-images.githubusercontent.com/6020549/58362420-c0d59c00-7ed1-11e9-9b8b-cf3657149c2f.JPG)
 ![ili9225-20](https://user-images.githubusercontent.com/6020549/58362421-c16e3280-7ed1-11e9-8033-eea28354c9a5.JPG)
+![ili9225-21](https://user-images.githubusercontent.com/6020549/58362618-03987380-7ed4-11e9-8288-7e325b38a344.JPG)
 
