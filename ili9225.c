@@ -49,7 +49,6 @@ uint16_t _FONT_FILL_COLOR_;
 uint16_t _FONT_UNDER_LINE_;
 uint16_t _FONT_UNDER_LINE_COLOR_;
 
-uint16_t _model;
 uint16_t _width;
 uint16_t _height;
 
@@ -71,6 +70,15 @@ void lcdWriteDataByte(uint8_t c){
   wiringPiSPIDataRW(0, &c, 1);
 //  digitalWrite(C_S,HIGH);
 }
+
+// SPI Write Data 16Bit
+void lcdWriteDataWord(uint16_t w){
+  uint8_t hi,lo;
+  hi = (char) (w >> 8);
+  lo = (char) (w & 0x00FF);
+  lcdWriteDataByte(hi);
+  lcdWriteDataByte(lo);
+}
 #endif
 
 #ifndef WPI
@@ -87,22 +95,13 @@ void lcdWriteDataByte(uint8_t c){
   bcm2835_gpio_write(D_C,HIGH);
   bcm2835_spi_transfer(c);
 }
-#endif
 
 // SPI Write Data 16Bit
 void lcdWriteDataWord(uint16_t w){
-#if 0
-//bcm2835-1.42
-  uint8_t hi,lo;
-  hi = (char) (w >> 8);
-  lo = (char) (w & 0x00FF);
-  lcdWriteDataByte(hi);
-  lcdWriteDataByte(lo);
-#endif
-//bcm2835-1.56
   bcm2835_gpio_write(D_C,HIGH);
   bcm2835_spi_write(w);
 }
+#endif
 
 // SPI Write Command & Data
 void lcdWrite9225(uint8_t c, uint16_t d){
@@ -119,8 +118,7 @@ void lcdWrite9225(uint8_t c, uint16_t d){
 #ifdef WPI
 // SPI interfase initialize
 // MSB,mode0,clock=8,cs0=low
-void lcdInit(uint16_t model, uint16_t width, uint16_t height){
-  _model = model;
+void lcdInit(int width, int height, int offsetx, int offsety){
   _width = width;
   _height = height;
 
@@ -153,8 +151,7 @@ void lcdReset(void){
 #ifndef WPI
 // SPI interfase initialize
 // MSB,mode0,clock=8,cs0=low
-void lcdInit(uint16_t model, uint16_t width, uint16_t height){
-  _model = model;
+void lcdInit(int width, int height, int offsetx, int offsety){
   _width = width;
   _height = height;
 
@@ -203,7 +200,8 @@ void lcdSetup(void){
   lcdWrite9225(0x0F, 0x0801); // Set frame rate
   lcdWrite9225(0x20, 0x0000); // Set GRAM Address
   lcdWrite9225(0x21, 0x0000); // Set GRAM Address
-//*************Power On sequence ****************//
+
+//************* Power On sequence ****************//
   delay(50); // Delay 50ms
   lcdWrite9225(0x10, 0x0A00); // Set SAP,DSTB,STB
   lcdWrite9225(0x11, 0x1038); // Set APON,PON,AON,VCI1EN,VC
@@ -211,7 +209,7 @@ void lcdSetup(void){
   lcdWrite9225(0x12, 0x1121); // Internal reference voltage= Vci;
   lcdWrite9225(0x13, 0x0066); // Set GVDD
   lcdWrite9225(0x14, 0x5F60); // Set VCOMH/VCOML voltage
-//------------------------ Set GRAM area --------------------------------//
+//------------- Set GRAM area --------------------//
   lcdWrite9225(0x30, 0x0000);
   lcdWrite9225(0x31, 0x00DB);
   lcdWrite9225(0x32, 0x0000);
@@ -222,7 +220,7 @@ void lcdSetup(void){
   lcdWrite9225(0x37, 0x0000);
   lcdWrite9225(0x38, 0x00DB);
   lcdWrite9225(0x39, 0x0000);
-// ----------- Adjust the Gamma Curve ----------//
+// ------------ Adjust the Gamma Curve ----------//
   lcdWrite9225(0x50, 0x0400);
   lcdWrite9225(0x51, 0x060B);
   lcdWrite9225(0x52, 0x0C0A);
@@ -242,8 +240,8 @@ void lcdSetup(void){
 // y:Y coordinate
 // color:color
 void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color){
-  if (x < 0 || x >= _width) return;
-  if (y < 0 || y >= _height) return;
+  if (x >= _width) return;
+  if (y >= _height) return;
   lcdWrite9225(0x20,x); // set column(x) address
   lcdWrite9225(0x21,y); // set column(y) address
   lcdWrite9225(0x22,color); // Memory Write
@@ -258,12 +256,8 @@ void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color){
 void lcdDrawFillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color){
   int i,j;
   if (x1 >= _width) return;
-  if (x1 < 0) x1=0;
-  if (x2 < 0) return;
   if (x2 >= _width) x2=_width-1;
   if (y1 >= _height) return;
-  if (y1 < 0) y1=0;
-  if (y2 < 0) return;
   if (y2 >= _height) y2=_height-1;
 
   for(j=y1;j<=y2;j++){
@@ -426,11 +420,13 @@ void lcdDrawRoundRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16
 
   if(x1>x2) {
     temp=x1; x1=x2; x2=temp;
-  } // if
+  }
   
   if(y1>y2) {
     temp=y1; y1=y2; y2=temp;
-  } // if
+  }
+  if (x2 - x1 < r) return; // Add 20190517
+  if (y2 - y1 < r) return; // Add 20190517
   
   
   x=0;
@@ -571,7 +567,7 @@ if(_DEBUG_)printf("GetFontx rc=%d pw=%d ph=%d\n",rc,pw,ph);
     xd2 =  0;
     yd2 =  0;
     xss =  x;
-    yss =  y + ph - 1;
+    yss =  y + (ph - 1);
     xsd =  1;
     ysd =  0;
     next = x + pw;
@@ -590,7 +586,7 @@ if(_DEBUG_)printf("GetFontx rc=%d pw=%d ph=%d\n",rc,pw,ph);
     yd1 =  0;
     xd2 = -1;
     yd2 = -1;
-    xss =  x + ph;
+    xss =  x + (ph - 1); // Bug Fix
     yss =  y;
     xsd =  0;
     ysd =  1;
@@ -600,7 +596,7 @@ if(_DEBUG_)printf("GetFontx rc=%d pw=%d ph=%d\n",rc,pw,ph);
     yd1 =  0;
     xd2 = +1;
     yd2 = +1;
-    xss =  x - ph - 1;
+    xss =  x - (ph - 1); // Bug Fix
     yss =  y;
     xsd =  0;
     ysd =  1;

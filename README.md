@@ -56,5 +56,14 @@ sudo ./demo
 
 ---
 
-![ili9225-3](https://cloud.githubusercontent.com/assets/6020549/25643234/827c5e60-2fd9-11e7-8f3d-969950c99615.JPG)
+![ili9225-11](https://user-images.githubusercontent.com/6020549/58362412-bfa46f00-7ed1-11e9-9c74-dd56ea798c2c.JPG)
+![ili9225-12](https://user-images.githubusercontent.com/6020549/58362413-bfa46f00-7ed1-11e9-93c5-7a6c78b6b2a5.JPG)
+![ili9225-13](https://user-images.githubusercontent.com/6020549/58362414-bfa46f00-7ed1-11e9-80a4-e3c8e6f0f901.JPG)
+![ili9225-14](https://user-images.githubusercontent.com/6020549/58362415-c03d0580-7ed1-11e9-8506-bc6b8e9b9afd.JPG)
+![ili9225-15](https://user-images.githubusercontent.com/6020549/58362416-c03d0580-7ed1-11e9-9f2a-b40fd4ee5776.JPG)
+![ili9225-16](https://user-images.githubusercontent.com/6020549/58362417-c03d0580-7ed1-11e9-899d-a61d415d4947.JPG)
+![ili9225-17](https://user-images.githubusercontent.com/6020549/58362418-c03d0580-7ed1-11e9-8a0d-fc3342925b06.JPG)
+![ili9225-18](https://user-images.githubusercontent.com/6020549/58362419-c0d59c00-7ed1-11e9-8fec-2d5b673a877a.JPG)
+![ili9225-19](https://user-images.githubusercontent.com/6020549/58362420-c0d59c00-7ed1-11e9-9b8b-cf3657149c2f.JPG)
+![ili9225-20](https://user-images.githubusercontent.com/6020549/58362421-c16e3280-7ed1-11e9-8033-eea28354c9a5.JPG)
 
