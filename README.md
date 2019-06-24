@@ -43,10 +43,11 @@ _\* Because this tool uses bcm2835_spi_write._
 
 
 ```
-git clone https://github.com/nopnop2002/ili9225spi_rpi   
-cd ili9225spi_rpi   
-cc -o demo demo.c fontx.c ili9225.c -lbcm2835 -lm -lpthread   
-sudo ./demo   
+git clone https://github.com/nopnop2002/ili9225spi_rpi
+cd ili9225spi_rpi
+cc -o demo demo.c fontx.c ili9225.c -lbcm2835 -lm -lpthread
+sudo ./demo
+
 ColorBarTest elapsed time[ms]=61
 ArrowTest elapsed time[ms]=77
 LineTest elapsed time[ms]=163
@@ -64,10 +65,11 @@ ColorTest elapsed time[ms]=125
 build with wiringPi library (very slow)   
 
 ```
-git clone https://github.com/nopnop2002/ili9225spi_rpi   
-cd ili9225spi_rpi   
-cc -o demo demo.c fontx.c ili9225.c -lwiringPi -lm -lpthread -DWPI   
-sudo ./demo   
+git clone https://github.com/nopnop2002/ili9225spi_rpi
+cd ili9225spi_rpi
+cc -o demo demo.c fontx.c ili9225.c -lwiringPi -lm -lpthread -DWPI
+sudo ./demo
+
 ColorBarTest elapsed time[ms]=170
 ArrowTest elapsed time[ms]=754
 LineTest elapsed time[ms]=4716
