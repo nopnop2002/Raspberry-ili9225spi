@@ -27,6 +27,7 @@ If you want to use other pin, You have to change this.
 
 build with bcm2835 library (very fast)   
 
+```
 wget http://www.airspayce.com/mikem/bcm2835/bcm2835-1.56.tar.gz   
 tar zxvf bcm2835-1.56.tar.gz   
 cd bcm2835-1.56   
@@ -35,24 +36,49 @@ make
 sudo make check   
 sudo make install   
 cd $HOME   
+```
 
 _\* This tool require 1.56 or later._   
 _\* Because this tool uses bcm2835_spi_write._   
 
 
+```
 git clone https://github.com/nopnop2002/ili9225spi_rpi   
 cd ili9225spi_rpi   
 cc -o demo demo.c fontx.c ili9225.c -lbcm2835 -lm -lpthread   
 sudo ./demo   
+ColorBarTest elapsed time[ms]=61
+ArrowTest elapsed time[ms]=77
+LineTest elapsed time[ms]=163
+CircleTest elapsed time[ms]=152
+RoundRectTest elapsed time[ms]=150
+DirectionTest elapsed time[ms]=73
+HorizontalTest elapsed time[ms]=112
+VerticalTest elapsed time[ms]=111
+FillRectTest elapsed time[ms]=143
+ColorTest elapsed time[ms]=125
+```
 
 ----
 
 build with wiringPi library (very slow)   
 
+```
 git clone https://github.com/nopnop2002/ili9225spi_rpi   
 cd ili9225spi_rpi   
 cc -o demo demo.c fontx.c ili9225.c -lwiringPi -lm -lpthread -DWPI   
 sudo ./demo   
+ColorBarTest elapsed time[ms]=170
+ArrowTest elapsed time[ms]=754
+LineTest elapsed time[ms]=4716
+CircleTest elapsed time[ms]=4147
+RoundRectTest elapsed time[ms]=4113
+DirectionTest elapsed time[ms]=689
+HorizontalTest elapsed time[ms]=2021
+VerticalTest elapsed time[ms]=1912
+FillRectTest elapsed time[ms]=1081
+ColorTest elapsed time[ms]=338
+```
 
 ---
 

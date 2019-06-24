@@ -56,19 +56,15 @@ uint16_t _height;
 // SPI Write Command 8Bit
 // D/C=LOW then,write command(8bit)
 void lcdWriteCommandByte(uint8_t c){
-//  digitalWrite(C_S,LOW);
   digitalWrite(D_C,LOW);
   wiringPiSPIDataRW(0, &c, 1);
-//  digitalWrite(C_S,HIGH);
 }
 
 // SPI Write Data 8Bit
 // D/C=HIGH then,write data(8bit)
 void lcdWriteDataByte(uint8_t c){
-//  digitalWrite(C_S,LOW);
   digitalWrite(D_C,HIGH);
   wiringPiSPIDataRW(0, &c, 1);
-//  digitalWrite(C_S,HIGH);
 }
 
 // SPI Write Data 16Bit
@@ -78,6 +74,18 @@ void lcdWriteDataWord(uint16_t w){
   lo = (char) (w & 0x00FF);
   lcdWriteDataByte(hi);
   lcdWriteDataByte(lo);
+}
+
+void lcdWriteColor(uint16_t color, uint16_t size) {
+  uint8_t byte[1024];
+  int index=0;
+  int i;
+  for(i=0;i<size;i++) {
+    byte[index++] = (color >> 8) & 0xFF;
+    byte[index++] = color & 0xFF;
+  }
+  digitalWrite(D_C,HIGH);
+  wiringPiSPIDataRW(0, byte, size*2);
 }
 #endif
 
@@ -101,6 +109,13 @@ void lcdWriteDataWord(uint16_t w){
   bcm2835_gpio_write(D_C,HIGH);
   bcm2835_spi_write(w);
 }
+
+void lcdWriteColor(uint16_t color, uint16_t size) {
+  bcm2835_gpio_write(D_C,HIGH);
+  int i;
+  for(i=0;i<size;i++) bcm2835_spi_write(color);
+}
+
 #endif
 
 // SPI Write Command & Data
@@ -260,13 +275,23 @@ void lcdDrawFillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_
   if (y1 >= _height) return;
   if (y2 >= _height) y2=_height-1;
 
+#if 0
   for(j=y1;j<=y2;j++){
-    lcdWrite9225(0x20,x1); // set column(x) address
-    lcdWrite9225(0x21,j); // set column(y) address
+    lcdWrite9225(0x20, x1); // set column(x) address
+    lcdWrite9225(0x21, j); // set column(y) address
     lcdWriteCommandByte(0x22); // Memory Write
     for(i=x1;i<=x2;i++) {
       lcdWriteDataWord(color);
     }
+  }
+#endif
+
+  for(j=y1;j<=y2;j++){
+    lcdWrite9225(0x20, x1); // set column(x) address
+    lcdWrite9225(0x21, j); // set column(y) address
+    lcdWriteCommandByte(0x22); // Memory Write
+    uint16_t size = x2-x1+1;
+    lcdWriteColor(color, size);
   }
 }
 
@@ -561,6 +586,10 @@ if(_DEBUG_)printf("GetFontx rc=%d pw=%d ph=%d\n",rc,pw,ph);
   uint16_t xss, yss;
   uint16_t xsd, ysd;
   int next;
+  uint16_t x0 = 0;
+  uint16_t x1 = 0;
+  uint16_t y0 = 0;
+  uint16_t y1 = 0;
   if (_FONT_DIRECTION_ == 0) {
     xd1 = +1;
     yd1 = -1;
@@ -571,6 +600,11 @@ if(_DEBUG_)printf("GetFontx rc=%d pw=%d ph=%d\n",rc,pw,ph);
     xsd =  1;
     ysd =  0;
     next = x + pw;
+
+    x0 = x;
+    y0 = y;
+    x1 = x + (pw-1);
+    y1 = y + (ph-1);
   } else if (_FONT_DIRECTION_ == 2) {
     xd1 = -1;
     yd1 = +1;
@@ -581,6 +615,11 @@ if(_DEBUG_)printf("GetFontx rc=%d pw=%d ph=%d\n",rc,pw,ph);
     xsd =  1;
     ysd =  0;
     next = x - pw;
+
+    x0 = x - (pw-1);
+    y0 = y - (ph-1);
+    x1 = x;
+    y1 = y;
   } else if (_FONT_DIRECTION_ == 1) {
     xd1 =  0;
     yd1 =  0;
@@ -591,6 +630,11 @@ if(_DEBUG_)printf("GetFontx rc=%d pw=%d ph=%d\n",rc,pw,ph);
     xsd =  0;
     ysd =  1;
     next = y - pw;
+
+    x0 = x;
+    y0 = y - (pw-1);
+    x1 = x + (ph-1);
+    y1 = y;
   } else if (_FONT_DIRECTION_ == 3) {
     xd1 =  0;
     yd1 =  0;
@@ -601,7 +645,14 @@ if(_DEBUG_)printf("GetFontx rc=%d pw=%d ph=%d\n",rc,pw,ph);
     xsd =  0;
     ysd =  1;
     next = y + pw;
+
+    x0 = x - (ph-1);
+    y0 = y;
+    x1 = x;
+    y1 = y + (pw-1);
   }
+  //if (_FONT_FILL_) printf("x0=%d y0=%d x1=%d y1=%d\n",x0,y0,x1,y1);
+  if (_FONT_FILL_) lcdDrawFillRect(x0, y0, x1, y1, _FONT_FILL_COLOR_);
 
   int bits;
 if(_DEBUG_)printf("xss=%d yss=%d\n",xss,yss);
@@ -622,7 +673,7 @@ if(_DEBUG_)printf("xss=%d yss=%d\n",xss,yss);
         if (fonts[ofs] & mask) {
           lcdDrawPixel(xx,yy,color);
         } else {
-          if (_FONT_FILL_) lcdDrawPixel(xx,yy,_FONT_FILL_COLOR_);
+          //if (_FONT_FILL_) lcdDrawPixel(xx,yy,_FONT_FILL_COLOR_);
         }
         if (h == (ph-2) && _FONT_UNDER_LINE_)
           lcdDrawPixel(xx,yy,_FONT_UNDER_LINE_COLOR_);
