@@ -49,15 +49,15 @@ cc -o demo demo.c fontx.c ili9225.c -lbcm2835 -lm -lpthread
 sudo ./demo
 
 ColorBarTest elapsed time[ms]=61
-ArrowTest elapsed time[ms]=77
-LineTest elapsed time[ms]=163
-CircleTest elapsed time[ms]=152
-RoundRectTest elapsed time[ms]=150
-DirectionTest elapsed time[ms]=73
-HorizontalTest elapsed time[ms]=112
-VerticalTest elapsed time[ms]=111
-FillRectTest elapsed time[ms]=143
-ColorTest elapsed time[ms]=125
+ArrowTest elapsed time[ms]=71
+LineTest elapsed time[ms]=133
+CircleTest elapsed time[ms]=127
+RoundRectTest elapsed time[ms]=123
+DirectionTest elapsed time[ms]=70
+HorizontalTest elapsed time[ms]=101
+VerticalTest elapsed time[ms]=99
+FillRectTest elapsed time[ms]=129
+ColorTest elapsed time[ms]=122
 ```
 
 ----
@@ -70,16 +70,16 @@ cd ili9225spi_rpi
 cc -o demo demo.c fontx.c ili9225.c -lwiringPi -lm -lpthread -DWPI
 sudo ./demo
 
-ColorBarTest elapsed time[ms]=170
-ArrowTest elapsed time[ms]=754
-LineTest elapsed time[ms]=4716
-CircleTest elapsed time[ms]=4147
-RoundRectTest elapsed time[ms]=4113
-DirectionTest elapsed time[ms]=689
-HorizontalTest elapsed time[ms]=2021
-VerticalTest elapsed time[ms]=1912
-FillRectTest elapsed time[ms]=1081
-ColorTest elapsed time[ms]=338
+ColorBarTest elapsed time[ms]=140
+ArrowTest elapsed time[ms]=536
+LineTest elapsed time[ms]=3157
+CircleTest elapsed time[ms]=2764
+RoundRectTest elapsed time[ms]=2746
+DirectionTest elapsed time[ms]=480
+HorizontalTest elapsed time[ms]=1399
+VerticalTest elapsed time[ms]=1314
+FillRectTest elapsed time[ms]=776
+ColorTest elapsed time[ms]=278
 ```
 
 ---

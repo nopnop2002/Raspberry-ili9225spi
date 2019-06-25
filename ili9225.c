@@ -5,9 +5,9 @@
 // [Pin connection]
 // ILI9225-SPI     Rpi(pin)
 // ------------------------
-// CS--------------CS0 (24)  LOW = 0 = Chip Select
-// RST-------------IO03( 5)  LOW = 0 = RESET
-// RS(DC)----------IO02( 3)  LOW = 0 = COMMAND
+// CS--------------CS0 (24)  Chip Select
+// RST-------------IO03( 5)  Reset
+// RS(DC)----------IO02( 3)  0=COMMAND/1=DATA
 // SDA-------------MOSI(19)
 // CLK-------------SCLK(23)
 // GND-------------0V  ( 6)
@@ -37,9 +37,9 @@
 #endif
 #include "ili9225.h"
 
-#define D_C  2  // GPIO2=D/C
-#define RES  3  // GPIO3=RESET
-#define C_S  8  // GPIO8
+#define D_C  2  // GPIO2(Pin#3)
+#define RST  3  // GPIO3(Pin#5)
+#define C_S  8  // GPIO8(Pin#24)
 
 #define _DEBUG_ 0
 
@@ -53,29 +53,41 @@ uint16_t _width;
 uint16_t _height;
 
 #ifdef WPI
-// SPI Write Command 8Bit
+// Write Command 8Bit
 // D/C=LOW then,write command(8bit)
 void lcdWriteCommandByte(uint8_t c){
-  digitalWrite(D_C,LOW);
+  digitalWrite(D_C, LOW);
   wiringPiSPIDataRW(0, &c, 1);
 }
 
-// SPI Write Data 8Bit
+// Write Data 8Bit
 // D/C=HIGH then,write data(8bit)
 void lcdWriteDataByte(uint8_t c){
-  digitalWrite(D_C,HIGH);
+  digitalWrite(D_C, HIGH);
   wiringPiSPIDataRW(0, &c, 1);
 }
 
-// SPI Write Data 16Bit
+// Write Data 16Bit
 void lcdWriteDataWord(uint16_t w){
   uint8_t hi,lo;
-  hi = (char) (w >> 8);
-  lo = (char) (w & 0x00FF);
+  hi = (w >> 8) & 0xFF;
+  lo = w & 0xFF;
   lcdWriteDataByte(hi);
   lcdWriteDataByte(lo);
 }
 
+// Write Command 8Bit & Write Data 16Bit
+void lcdWriteRegisterWord(uint8_t addr, uint16_t data){
+  digitalWrite(D_C, LOW);
+  wiringPiSPIDataRW(0, &addr, 1);
+  uint8_t byte[2];
+  byte[0] = (data >> 8) & 0xFF;
+  byte[1] = data & 0xFF;
+  digitalWrite(D_C, HIGH);
+  wiringPiSPIDataRW(0, byte, 2);
+}
+
+// Write Data 16Bit
 void lcdWriteColor(uint16_t color, uint16_t size) {
   uint8_t byte[1024];
   int index=0;
@@ -84,51 +96,48 @@ void lcdWriteColor(uint16_t color, uint16_t size) {
     byte[index++] = (color >> 8) & 0xFF;
     byte[index++] = color & 0xFF;
   }
-  digitalWrite(D_C,HIGH);
+  digitalWrite(D_C, HIGH);
   wiringPiSPIDataRW(0, byte, size*2);
 }
 #endif
 
 #ifndef WPI
-// SPI Write Command 8Bit
+// Write Command 8Bit
 // D/C=LOW then,write command(8bit)
 void lcdWriteCommandByte(uint8_t c){
-  bcm2835_gpio_write(D_C,LOW);
+  bcm2835_gpio_write(D_C, LOW);
   bcm2835_spi_transfer(c);
 }
 
-// SPI Write Data 8Bit
+// Write Data 8Bit
 // D/C=HIGH then,write data(8bit)
 void lcdWriteDataByte(uint8_t c){
-  bcm2835_gpio_write(D_C,HIGH);
+  bcm2835_gpio_write(D_C, HIGH);
   bcm2835_spi_transfer(c);
 }
 
-// SPI Write Data 16Bit
+// Write Data 16Bit
 void lcdWriteDataWord(uint16_t w){
-  bcm2835_gpio_write(D_C,HIGH);
+  bcm2835_gpio_write(D_C, HIGH);
   bcm2835_spi_write(w);
 }
 
+// Write Command 8Bit & Write Data 16Bit
+void lcdWriteRegisterWord(uint8_t addr, uint16_t data){
+  bcm2835_gpio_write(D_C, LOW);
+  bcm2835_spi_transfer(addr);
+  bcm2835_gpio_write(D_C, HIGH);
+  bcm2835_spi_write(data);
+}
+
+// Write Data 16Bit
 void lcdWriteColor(uint16_t color, uint16_t size) {
-  bcm2835_gpio_write(D_C,HIGH);
+  bcm2835_gpio_write(D_C, HIGH);
   int i;
   for(i=0;i<size;i++) bcm2835_spi_write(color);
 }
 
 #endif
-
-// SPI Write Command & Data
-void lcdWrite9225(uint8_t c, uint16_t d){
-  uint8_t lo,hi;
-  lcdWriteCommandByte(c);
-
-  hi = (char) (d >> 8);
-  lo = (char) (d & 0x00FF);
-  lcdWriteDataByte(hi);
-  lcdWriteDataByte(lo);
-}
-
 
 #ifdef WPI
 // SPI interfase initialize
@@ -150,15 +159,15 @@ void lcdInit(int width, int height, int offsetx, int offsety){
 
 }
 void lcdReset(void){
-  pinMode(D_C,OUTPUT);
-  pinMode(RES,OUTPUT);
-  pinMode(C_S,OUTPUT);
-  digitalWrite(D_C,HIGH);   // D/C = H
-  digitalWrite(C_S,LOW);
+  pinMode(D_C, OUTPUT);
+  pinMode(RST, OUTPUT);
+  pinMode(C_S, OUTPUT);
+  digitalWrite(D_C, HIGH);
+  digitalWrite(C_S, LOW);
 
-  digitalWrite(RES, LOW);    // Reset low
+  digitalWrite(RST, LOW);
   delay(100);
-  digitalWrite(RES, HIGH);   // Reset high
+  digitalWrite(RST, HIGH);
   delay(100);
 }
 #endif
@@ -192,13 +201,13 @@ void lcdInit(int width, int height, int offsetx, int offsety){
 
 // TFT Reset
 void lcdReset(void){
-  bcm2835_gpio_fsel(D_C,BCM2835_GPIO_FSEL_OUTP); // D/C
-  bcm2835_gpio_fsel(RES,BCM2835_GPIO_FSEL_OUTP); // Reset
+  bcm2835_gpio_fsel(D_C, BCM2835_GPIO_FSEL_OUTP); // D/C
+  bcm2835_gpio_fsel(RST, BCM2835_GPIO_FSEL_OUTP); // Reset
 //  bcm2835_gpio_write(D_C, HIGH);   // D/C = H
 
-  bcm2835_gpio_write(RES, LOW);   // Reset
+  bcm2835_gpio_write(RST, LOW);
   bcm2835_delay(100);
-  bcm2835_gpio_write(RES, HIGH);   // Reset off
+  bcm2835_gpio_write(RST, HIGH);
   bcm2835_delay(100); 
 }
 #endif
@@ -206,48 +215,48 @@ void lcdReset(void){
 // TFT initialize
 void lcdSetup(void){
 //************* Start Initial Sequence **********//
-//  lcdWrite9225(0x01, 0x011C); // set SS and NL bit
-  lcdWrite9225(0x01, 0x031C); // set SS and NL bit
-  lcdWrite9225(0x02, 0x0100); // set 1 line inversion
-  lcdWrite9225(0x03, 0x1030); // set GRAM write direction and BGR=1.
-  lcdWrite9225(0x08, 0x0808); // set BP and FP
-  lcdWrite9225(0x0C, 0x0000); // RGB interface setting R0Ch=0x0110 for RGB 18Bit and R0Ch=0111for RGB16Bit
-  lcdWrite9225(0x0F, 0x0801); // Set frame rate
-  lcdWrite9225(0x20, 0x0000); // Set GRAM Address
-  lcdWrite9225(0x21, 0x0000); // Set GRAM Address
+//  lcdWriteRegisterWord(0x01, 0x011C); // set SS and NL bit
+  lcdWriteRegisterWord(0x01, 0x031C); // set SS and NL bit
+  lcdWriteRegisterWord(0x02, 0x0100); // set 1 line inversion
+  lcdWriteRegisterWord(0x03, 0x1030); // set GRAM write direction and BGR=1.
+  lcdWriteRegisterWord(0x08, 0x0808); // set BP and FP
+  lcdWriteRegisterWord(0x0C, 0x0000); // RGB interface setting R0Ch=0x0110 for RGB 18Bit and R0Ch=0111for RGB16Bit
+  lcdWriteRegisterWord(0x0F, 0x0801); // Set frame rate
+  lcdWriteRegisterWord(0x20, 0x0000); // Set GRAM Address
+  lcdWriteRegisterWord(0x21, 0x0000); // Set GRAM Address
 
 //************* Power On sequence ****************//
   delay(50); // Delay 50ms
-  lcdWrite9225(0x10, 0x0A00); // Set SAP,DSTB,STB
-  lcdWrite9225(0x11, 0x1038); // Set APON,PON,AON,VCI1EN,VC
+  lcdWriteRegisterWord(0x10, 0x0A00); // Set SAP,DSTB,STB
+  lcdWriteRegisterWord(0x11, 0x1038); // Set APON,PON,AON,VCI1EN,VC
   delay(50); // Delay 50ms
-  lcdWrite9225(0x12, 0x1121); // Internal reference voltage= Vci;
-  lcdWrite9225(0x13, 0x0066); // Set GVDD
-  lcdWrite9225(0x14, 0x5F60); // Set VCOMH/VCOML voltage
+  lcdWriteRegisterWord(0x12, 0x1121); // Internal reference voltage= Vci;
+  lcdWriteRegisterWord(0x13, 0x0066); // Set GVDD
+  lcdWriteRegisterWord(0x14, 0x5F60); // Set VCOMH/VCOML voltage
 //------------- Set GRAM area --------------------//
-  lcdWrite9225(0x30, 0x0000);
-  lcdWrite9225(0x31, 0x00DB);
-  lcdWrite9225(0x32, 0x0000);
-  lcdWrite9225(0x33, 0x0000);
-  lcdWrite9225(0x34, 0x00DB);
-  lcdWrite9225(0x35, 0x0000);
-  lcdWrite9225(0x36, 0x00AF);
-  lcdWrite9225(0x37, 0x0000);
-  lcdWrite9225(0x38, 0x00DB);
-  lcdWrite9225(0x39, 0x0000);
+  lcdWriteRegisterWord(0x30, 0x0000);
+  lcdWriteRegisterWord(0x31, 0x00DB);
+  lcdWriteRegisterWord(0x32, 0x0000);
+  lcdWriteRegisterWord(0x33, 0x0000);
+  lcdWriteRegisterWord(0x34, 0x00DB);
+  lcdWriteRegisterWord(0x35, 0x0000);
+  lcdWriteRegisterWord(0x36, 0x00AF);
+  lcdWriteRegisterWord(0x37, 0x0000);
+  lcdWriteRegisterWord(0x38, 0x00DB);
+  lcdWriteRegisterWord(0x39, 0x0000);
 // ------------ Adjust the Gamma Curve ----------//
-  lcdWrite9225(0x50, 0x0400);
-  lcdWrite9225(0x51, 0x060B);
-  lcdWrite9225(0x52, 0x0C0A);
-  lcdWrite9225(0x53, 0x0105);
-  lcdWrite9225(0x54, 0x0A0C);
-  lcdWrite9225(0x55, 0x0B06);
-  lcdWrite9225(0x56, 0x0004);
-  lcdWrite9225(0x57, 0x0501);
-  lcdWrite9225(0x58, 0x0E00);
-  lcdWrite9225(0x59, 0x000E);
+  lcdWriteRegisterWord(0x50, 0x0400);
+  lcdWriteRegisterWord(0x51, 0x060B);
+  lcdWriteRegisterWord(0x52, 0x0C0A);
+  lcdWriteRegisterWord(0x53, 0x0105);
+  lcdWriteRegisterWord(0x54, 0x0A0C);
+  lcdWriteRegisterWord(0x55, 0x0B06);
+  lcdWriteRegisterWord(0x56, 0x0004);
+  lcdWriteRegisterWord(0x57, 0x0501);
+  lcdWriteRegisterWord(0x58, 0x0E00);
+  lcdWriteRegisterWord(0x59, 0x000E);
   delay(50); // Delay 50ms
-  lcdWrite9225(0x07, 0x1017);
+  lcdWriteRegisterWord(0x07, 0x1017);
 }
 
 // Draw pixel
@@ -257,9 +266,9 @@ void lcdSetup(void){
 void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color){
   if (x >= _width) return;
   if (y >= _height) return;
-  lcdWrite9225(0x20,x); // set column(x) address
-  lcdWrite9225(0x21,y); // set column(y) address
-  lcdWrite9225(0x22,color); // Memory Write
+  lcdWriteRegisterWord(0x20,x); // set column(x) address
+  lcdWriteRegisterWord(0x21,y); // set column(y) address
+  lcdWriteRegisterWord(0x22,color); // Memory Write
 }
 
 // Draw rectangule of filing
@@ -269,16 +278,17 @@ void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color){
 // y2:End Y coordinate
 // color:color
 void lcdDrawFillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color){
-  int i,j;
+  int j;
   if (x1 >= _width) return;
   if (x2 >= _width) x2=_width-1;
   if (y1 >= _height) return;
   if (y2 >= _height) y2=_height-1;
 
 #if 0
+  int i;
   for(j=y1;j<=y2;j++){
-    lcdWrite9225(0x20, x1); // set column(x) address
-    lcdWrite9225(0x21, j); // set column(y) address
+    lcdWriteRegisterWord(0x20, x1); // set column(x) address
+    lcdWriteRegisterWord(0x21, j); // set column(y) address
     lcdWriteCommandByte(0x22); // Memory Write
     for(i=x1;i<=x2;i++) {
       lcdWriteDataWord(color);
@@ -287,8 +297,8 @@ void lcdDrawFillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_
 #endif
 
   for(j=y1;j<=y2;j++){
-    lcdWrite9225(0x20, x1); // set column(x) address
-    lcdWrite9225(0x21, j); // set column(y) address
+    lcdWriteRegisterWord(0x20, x1); // set column(x) address
+    lcdWriteRegisterWord(0x21, j); // set column(y) address
     lcdWriteCommandByte(0x22); // Memory Write
     uint16_t size = x2-x1+1;
     lcdWriteColor(color, size);
@@ -297,12 +307,12 @@ void lcdDrawFillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_
 
 // Display Off
 void lcdDisplayOff(void){
-  lcdWrite9225(0x07, 0x1014);
+  lcdWriteRegisterWord(0x07, 0x1014);
 }
  
 // Display On
 void lcdDisplayOn(void){
-  lcdWrite9225(0x07, 0x1017);
+  lcdWriteRegisterWord(0x07, 0x1017);
 }
 
 // Fill screen

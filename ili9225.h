@@ -17,9 +17,9 @@
 
 void lcdWriteCommandByte(uint8_t c);
 void lcdWriteDataByte(uint8_t c);
-void lcdWriteCommandWord(uint16_t w);
 void lcdWriteDataWord(uint16_t w);
-void lcdWrite9225(uint8_t c,uint16_t d);
+void lcdWriteRegisterWord(uint8_t addr, uint16_t data);
+void lcdWriteColor(uint16_t color, uint16_t size);
 void lcdInit(int width, int height, int offsetx, int offsety);
 void lcdReset(void);
 void lcdSetup(void);
