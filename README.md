@@ -11,7 +11,7 @@ Wirering
 |:-:|:-:|:-:|
 |CS|--|Pin#24(SPI CE0)|
 |RST|--|Pin#5(*)|
-|RS|--|Pin#3(*)|
+|DC|--|Pin#3(*)|
 |SDA|--|Pin#19(SPI MOSI)|
 |CLK|--|Pin#23(SPI SCLK)|
 |GND|--|GND|
@@ -20,8 +20,11 @@ Wirering
 (*) 
 This is default.   
 If you want to use other pin, You have to change this.   
-#define D_C  2  // GPIO2=D/C   
-#define RES  3  // GPIO3=RESET   
+
+```
+#define D_C  2  // GPIO2(Pin#3)
+#define RST  3  // GPIO3(Pin#5)
+```
 
 ----
 
