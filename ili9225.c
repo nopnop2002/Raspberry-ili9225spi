@@ -136,7 +136,6 @@ void lcdWriteColor(uint16_t color, uint16_t size) {
   int i;
   for(i=0;i<size;i++) bcm2835_spi_write(color);
 }
-
 #endif
 
 #ifdef WPI
@@ -382,6 +381,77 @@ void lcdDrawRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t co
   lcdDrawLine(x2,y2,x1,y2,color);
   lcdDrawLine(x1,y2,x1,y1,color);
 }
+
+// Draw rectangule with angle
+// xc:Center X coordinate
+// yc:Center Y coordinate
+// w:Width of rectangule
+// h:Height of rectangule
+// angle :Angle of rectangule
+// color :color
+
+//When the origin is (0, 0), the point (x1, y1) after rotating the point (x, y) by the angle is obtained by the following calculation.
+// x1 = x * cos(angle) - y * sin(angle)
+// y1 = x * sin(angle) + y * cos(angle)
+void lcdDrawRectAngle(uint16_t xc, uint16_t yc, uint16_t w, uint16_t h, uint16_t angle, uint16_t color)
+{
+  double xd,yd,rd;
+  int x1,y1;
+  int x2,y2;
+  int x3,y3;
+  int x4,y4;
+  rd = angle * M_PI / 180.0;
+  xd = 0.0 - w/2;
+  yd = h/2;
+  //printf("w=%d h=%d xd=%f yd=%f\n",w,h,xd,yd);
+  x1 = (int)(xd * cos(rd) - yd * sin(rd) + xc);
+  y1 = (int)(xd * sin(rd) + yd * cos(rd) + yc);
+ 
+  yd = 0.0 - yd;
+  //printf("w=%d h=%d xd=%f yd=%f\n",w,h,xd,yd);
+  x2 = (int)(xd * cos(rd) - yd * sin(rd) + xc);
+  y2 = (int)(xd * sin(rd) + yd * cos(rd) + yc);
+
+  xd = w/2;
+  yd = h/2;
+  //printf("w=%d h=%d xd=%f yd=%f\n",w,h,xd,yd);
+  x3 = (int)(xd * cos(rd) - yd * sin(rd) + xc);
+  y3 = (int)(xd * sin(rd) + yd * cos(rd) + yc);
+
+  yd = 0.0 - yd;
+  //printf("w=%d h=%d xd=%f yd=%f\n",w,h,xd,yd);
+  x4 = (int)(xd * cos(rd) - yd * sin(rd) + xc);
+  y4 = (int)(xd * sin(rd) + yd * cos(rd) + yc);
+  
+  lcdDrawLine(x1,y1,x2,y2,color);
+  lcdDrawLine(x1,y1,x3,y3,color);
+  lcdDrawLine(x2,y2,x4,y4,color);
+  lcdDrawLine(x3,y3,x4,y4,color);
+}
+
+// Draw fill rectangule with angle
+// xc:Center X coordinate
+// yc:Center Y coordinate
+// w:Width of rectangule
+// h:Height of rectangule
+// angle :Angle of rectangule
+// color :color
+
+void lcdDrawFillRectAngle(uint16_t xc, uint16_t yc, uint16_t w, uint16_t h, uint16_t angle, uint16_t color)
+{
+  int ww,hh;
+  int x,y;
+  double xd,yd,rd;
+  rd = angle * M_PI / 180.0;
+  for (yd=(-h/2);yd<(h/2);yd++) {
+    for (xd=(-w/2);xd<(w/2);xd++) {
+      x = (int)(xd * cos(rd) - yd * sin(rd) + xc);
+      y = (int)(xd * sin(rd) + yd * cos(rd) + yc);
+      lcdDrawPixel(x, y, color);
+    }
+  }
+}
+
 
 // Draw round
 // x0:Central X coordinate

@@ -347,6 +347,35 @@ time_t CircleTest(int width, int height) {
     return diff;
 }
 
+time_t RectAngleTest(int width, int height) {
+    struct timeval startTime, endTime;
+    gettimeofday(&startTime, NULL);
+
+    uint16_t color;
+    lcdFillScreen(BLACK);
+    color = CYAN;
+    uint16_t xpos = width/2;
+    uint16_t ypos = height/2;
+    uint16_t w = width * 0.8;
+    uint16_t h = w * 0.5;
+    int angle;
+    for(angle=0;angle<=(360*3);angle=angle+30) {
+      lcdDrawRectAngle(xpos, ypos, w, h, angle, color);
+      usleep(50000);
+      lcdDrawRectAngle(xpos, ypos, w, h, angle, BLACK);
+    }
+
+    for(angle=0;angle<=180;angle=angle+30) {
+      lcdDrawRectAngle(xpos, ypos, w, h, angle, color);
+    }
+
+    gettimeofday(&endTime, NULL);
+    time_t diff = elapsedTime(startTime, endTime);
+    printf("%s elapsed time[ms]=%ld\n",__func__, diff);
+    return diff;
+}
+
+
 time_t RoundRectTest(int width, int height) {
     struct timeval startTime, endTime;
     gettimeofday(&startTime, NULL);
@@ -474,7 +503,7 @@ if(_DEBUG_)printf("ReadTFTConfig:screenWidth=%d height=%d\n",screenWidth, screen
 
 #if 0
     while(1) {
-        VerticalTest(fx16G, screenWidth, screenHeight);
+        RectAngleTest(screenWidth, screenHeight);
         WAIT;
     }
 #endif
@@ -496,6 +525,9 @@ if(_DEBUG_)printf("ReadTFTConfig:screenWidth=%d height=%d\n",screenWidth, screen
     WAIT;
 
     RoundRectTest(screenWidth, screenHeight);
+    WAIT;
+
+    RectAngleTest(screenWidth, screenHeight);
     WAIT;
 
     if (screenWidth >= 240) {
