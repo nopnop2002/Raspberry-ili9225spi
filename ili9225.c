@@ -270,7 +270,7 @@ void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color){
   lcdWriteRegisterWord(0x22,color); // Memory Write
 }
 
-// Draw rectangule of filing
+// Draw rectangle of filing
 // x1:Start X coordinate
 // y1:Start Y coordinate
 // x2:End X coordinate
@@ -368,7 +368,7 @@ void lcdDrawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t co
   }
 }
 
-// Draw rectangule
+// Draw rectangle
 // x1:Start X coordinate
 // y1:Start Y coordinate
 // x2:End   X coordinate
@@ -382,12 +382,12 @@ void lcdDrawRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t co
   lcdDrawLine(x1,y2,x1,y1,color);
 }
 
-// Draw rectangule with angle
+// Draw rectangle with angle
 // xc:Center X coordinate
 // yc:Center Y coordinate
-// w:Width of rectangule
-// h:Height of rectangule
-// angle :Angle of rectangule
+// w:Width of rectangle
+// h:Height of rectangle
+// angle :Angle of rectangle
 // color :color
 
 //When the origin is (0, 0), the point (x1, y1) after rotating the point (x, y) by the angle is obtained by the following calculation.
@@ -429,12 +429,12 @@ void lcdDrawRectAngle(uint16_t xc, uint16_t yc, uint16_t w, uint16_t h, uint16_t
   lcdDrawLine(x3,y3,x4,y4,color);
 }
 
-// Draw fill rectangule with angle
+// Draw fill rectangle with angle
 // xc:Center X coordinate
 // yc:Center Y coordinate
-// w:Width of rectangule
-// h:Height of rectangule
-// angle :Angle of rectangule
+// w:Width of rectangle
+// h:Height of rectangle
+// angle :Angle of rectangle
 // color :color
 
 void lcdDrawFillRectAngle(uint16_t xc, uint16_t yc, uint16_t w, uint16_t h, uint16_t angle, uint16_t color)
@@ -453,7 +453,7 @@ void lcdDrawFillRectAngle(uint16_t xc, uint16_t yc, uint16_t w, uint16_t h, uint
 }
 
 
-// Draw round
+// Draw circle
 // x0:Central X coordinate
 // y0:Central Y coordinate
 // r:radius
@@ -479,7 +479,7 @@ void lcdDrawCircle(uint16_t x0, uint16_t y0, uint16_t r, uint16_t color)
   
 }
 
-// Draw round of filling
+// Draw circle of filling
 // x0:Central X coordinate
 // y0:Central Y coordinate
 // r:radius
@@ -508,7 +508,7 @@ void lcdDrawFillCircle(uint16_t x0, uint16_t y0, uint16_t r, uint16_t color)
     
 } 
 
-// Draw rectangule with round corner
+// Draw rectangle with round corner
 // x1:Start X coordinate
 // y1:Start Y coordinate
 // x2:End   X coordinate
