@@ -50,3 +50,7 @@ void lcdUnsetFontFill(void);
 void lcdSetFontUnderLine(uint16_t color);
 void lcdUnsetFontUnderLine(void);
 
+uint16_t _width;
+uint16_t _height;
+uint16_t _FONT_DIRECTION_;
+uint16_t _SCREEN_DIRECTION_;
