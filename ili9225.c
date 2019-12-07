@@ -43,6 +43,7 @@
 
 #define _DEBUG_ 0
 
+uint16_t _SCREEN_DIRECTION_;
 uint16_t _FONT_DIRECTION_;
 uint16_t _FONT_FILL_;
 uint16_t _FONT_FILL_COLOR_;
@@ -156,6 +157,7 @@ void lcdInit(int width, int height, int offsetx, int offsety){
   _FONT_FILL_ = false;
   _FONT_UNDER_LINE_ = false;
 
+  _SCREEN_DIRECTION_ = DIRECTION0;
 }
 void lcdReset(void){
   pinMode(D_C, OUTPUT);
@@ -258,11 +260,66 @@ void lcdSetup(void){
   lcdWriteRegisterWord(0x07, 0x1017);
 }
 
+// Rotate point coordinates
+// x:X coordinate
+// y:Y coordinate
+// color:color
+void lcdRotCoord(uint16_t *x, uint16_t *y) {
+  uint16_t t;
+
+  if(_SCREEN_DIRECTION_==DIRECTION90) {
+    t = (_height - 1) - *x;
+    *x = *y;
+    *y = t;
+  } else if(_SCREEN_DIRECTION_==DIRECTION180) {
+    *y = (_height - 1) - *y;
+    *x = (_width - 1) - *x;
+  } else if(_SCREEN_DIRECTION_==DIRECTION270) {
+    t = *x;
+    *x = (_width - 1) - *y;
+    *y = t;
+  }
+}
+
+// Rotate sqare coordinates
+// x1:Start X coordinate
+// y1:Start Y coordinate
+// x2:End X coordinate
+// y2:End Y coordinate
+void lcdRotSqCoord(uint16_t *x1, uint16_t *y1, uint16_t *x2, uint16_t *y2) {
+  uint16_t t1, t2;
+
+  if(_SCREEN_DIRECTION_==DIRECTION90) {
+    t1 = (_height - 1) - *x2; // (_height - *x1) + (x2 - x1) ;
+    t2 = (_height - 1) - *x1; //(_height - *x2) - (x2 - x1);
+    *x1 = *y1;
+    *x2 = *y2;
+    *y1 = t1;
+    *y2 = t2;
+  } else if(_SCREEN_DIRECTION_==DIRECTION180) {
+    t1 = (_height - 1) - *y1;
+    *y1 = (_height - 1) - *y2;
+    *y2 = t1;
+    t2 = (_width - 1) - *x1;
+    *x1 = (_width - 1) - *x2;
+    *x2 = t2;
+  } else if(_SCREEN_DIRECTION_==DIRECTION270) {
+    t1 = *x1;
+    t2 = *x2;
+    *x1 = (_width - 1) - *y2;
+    *x2 = (_width - 1) - *y1;
+    *y1 = t1;
+    *y2 = t2;
+  }
+}
+
 // Draw pixel
 // x:X coordinate
 // y:Y coordinate
 // color:color
 void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color){
+  lcdRotCoord(&x, &y);
+
   if (x >= _width) return;
   if (y >= _height) return;
   lcdWriteRegisterWord(0x20,x); // set column(x) address
@@ -277,6 +334,8 @@ void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color){
 // y2:End Y coordinate
 // color:color
 void lcdDrawFillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color){
+  lcdRotSqCoord(&x1, &y1, &x2, &y2);
+
   int j;
   if (x1 >= _width) return;
   if (x2 >= _width) x2=_width-1;
@@ -317,7 +376,10 @@ void lcdDisplayOn(void){
 // Fill screen
 // color:color
 void lcdFillScreen(uint16_t color) {
-  lcdDrawFillRect(0, 0, _width-1, _height-1, color);
+  if(_SCREEN_DIRECTION_==DIRECTION90 || _SCREEN_DIRECTION_==DIRECTION270)
+    lcdDrawFillRect(0, 0, _height-1, _width-1, color);
+  else
+    lcdDrawFillRect(0, 0, _width-1, _height-1, color);
 }
 
 // Draw line
@@ -822,6 +884,12 @@ if(_DEBUG_)printf("sjis[%d]=%x y=%d\n",i,sjis[i],y);
 // dir:Direction
 void lcdSetFontDirection(uint16_t dir) {
   _FONT_DIRECTION_ = dir;
+}
+
+// Set screen direction
+// dir:Direction
+void lcdSetScreenDirection(uint16_t dir) {
+  _SCREEN_DIRECTION_ = dir;
 }
 
 // Set font filling
