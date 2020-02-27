@@ -31,14 +31,14 @@ If you want to use other pin, You have to change this.
 build with bcm2835 library (very fast)   
 
 ```
-wget http://www.airspayce.com/mikem/bcm2835/bcm2835-1.56.tar.gz   
-tar zxvf bcm2835-1.56.tar.gz   
-cd bcm2835-1.56   
-./configure   
-make   
-sudo make check   
-sudo make install   
-cd $HOME   
+wget http://www.airspayce.com/mikem/bcm2835/bcm2835-1.56.tar.gz
+tar zxvf bcm2835-1.56.tar.gz
+cd bcm2835-1.56
+./configure
+make
+sudo make check
+sudo make install
+cd $HOME
 ```
 
 _\* This tool require 1.56 or later._   
