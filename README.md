@@ -1,4 +1,4 @@
-# ili9225spi_rpi
+# Raspberry-ili9225spi
 ILI9225 SPI TFT Library for RaspberryPi/OrangePi.  
 
 This library can show a chart to ILI9225 SPI TFT.   
@@ -46,8 +46,8 @@ _\* Because this tool uses bcm2835_spi_write._
 
 
 ```
-git clone https://github.com/nopnop2002/ili9225spi_rpi
-cd ili9225spi_rpi
+git clone https://github.com/nopnop2002/Raspberry-ili9225spi
+cd Raspberry-ili9225spi
 cc -o demo demo.c fontx.c ili9225.c -lbcm2835 -lm -lpthread
 sudo ./demo
 
@@ -68,8 +68,8 @@ ColorTest elapsed time[ms]=122
 build with wiringPi library (very slow)   
 
 ```
-git clone https://github.com/nopnop2002/ili9225spi_rpi
-cd ili9225spi_rpi
+git clone https://github.com/nopnop2002/Raspberry-ili9225spi
+cd Raspberry-ili9225spi
 cc -o demo demo.c fontx.c ili9225.c -lwiringPi -lm -lpthread -DWPI
 sudo ./demo
 
