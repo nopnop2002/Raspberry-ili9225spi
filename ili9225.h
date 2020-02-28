@@ -23,6 +23,8 @@ void lcdWriteColor(uint16_t color, uint16_t size);
 void lcdInit(int width, int height, int offsetx, int offsety);
 void lcdReset(void);
 void lcdSetup(void);
+void lcdRotCoord(uint16_t *x, uint16_t *y);
+void lcdRotSqCoord(uint16_t *x1, uint16_t *y1, uint16_t *x2, uint16_t *y2);
 void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color);
 void lcdDrawFillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color);
 void lcdDisplayOff(void);
@@ -42,8 +44,13 @@ int lcdDrawSJISChar(FontxFile *fx, uint16_t x,uint16_t y,uint16_t sjis,uint16_t 
 int lcdDrawUTF8Char(FontxFile *fx, uint16_t x,uint16_t y,uint8_t *utf8,uint16_t color);
 int lcdDrawUTF8String(FontxFile *fx, uint16_t x,uint16_t y,uint8_t *utfs,uint16_t color);
 void lcdSetFontDirection(uint16_t);
+void lcdSetScreenDirection(uint16_t dir);
 void lcdSetFontFill(uint16_t color);
 void lcdUnsetFontFill(void);
 void lcdSetFontUnderLine(uint16_t color);
 void lcdUnsetFontUnderLine(void);
 
+uint16_t _width;
+uint16_t _height;
+uint16_t _FONT_DIRECTION_;
+uint16_t _SCREEN_DIRECTION_;
